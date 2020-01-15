@@ -1,11 +1,9 @@
-const axios = require('axios');
+const { fetchItem, fetchTopStories } = require('./../../utils/api/hn');
 
 module.exports = async (parent, args, ctx, info) => {
   const { limit } = args;
 
-  const ids = await axios
-    .get('https://hacker-news.firebaseio.com/v0/topstories.json')
-    .then(res => res.data);
+  const ids = await fetchTopStories();
 
   const stories = [];
 
@@ -17,15 +15,7 @@ module.exports = async (parent, args, ctx, info) => {
   }
 
   for (let id of arr) {
-    // limit the return, save time
-    stories.push(
-      await axios
-        .get(`https://hacker-news.firebaseio.com/v0/item/${id}.json`, {
-          timeout: 1000000,
-          maxContentLength: 1000000
-        })
-        .then(res => res.data)
-    );
+    stories.push(await fetchItem(id));
   }
 
   const raw = await Promise.all(stories);

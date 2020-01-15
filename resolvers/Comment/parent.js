@@ -1,11 +1,9 @@
-const axios = require('axios');
+const { fetchItem } = require('./../../utils/api/hn');
 
 module.exports = async (parent, args, ctx, info) => {
   const { parent: par } = parent;
 
-  const res = await axios
-    .get(`https://hacker-news.firebaseio.com/v0/item/${par}.json`)
-    .then(res => res.data);
+  const res = await fetchItem(par);
 
   let obj = {};
 

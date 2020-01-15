@@ -1,12 +1,10 @@
-const axios = require('axios');
+const { fetchItem, fetchUser } = require('./../../utils/api/hn');
 
 module.exports = async (parent, args, ctx, info) => {
   const { id } = parent;
   const { limit } = args;
 
-  const res = await axios
-    .get(`https://hacker-news.firebaseio.com/v0/user/${id}.json`)
-    .then(res => res.data);
+  const res = await fetchUser(id);
 
   let submitted = [];
   if (limit) {
@@ -16,11 +14,8 @@ module.exports = async (parent, args, ctx, info) => {
   }
 
   const pr = [];
-  // handle all submitted []
   for (let i of submitted) {
-    pr.push(
-      await axios.get(`https://hacker-news.firebaseio.com/v0/item/${i}.json`).then(res => res.data)
-    );
+    pr.push(await fetchItem(i));
   }
 
   const raw = await Promise.all(pr);

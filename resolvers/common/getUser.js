@@ -1,11 +1,9 @@
-const axios = require('axios');
+const { fetchUser } = require('./../../utils/api/hn');
 
 module.exports = async (parent, args, context, info) => {
   const { by } = parent;
 
-  const res = await axios
-    .get(`https://hacker-news.firebaseio.com/v0/user/${by}.json`)
-    .then(res => res.data);
+  const res = await fetchUser(by);
 
   return {
     id: res.id,

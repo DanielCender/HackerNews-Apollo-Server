@@ -1,29 +1,14 @@
-const axios = require('axios');
+const { fetchItem } = require('./../../utils/api/hn');
+const getChildren = require('../common/getChildren');
 
 module.exports = async (parent, args, context, info) => {
   const { id } = args;
-  const pr = [];
 
-  const raw = await axios
-    .get(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
-    .then(res => res.data);
+  const raw = await fetchItem(id);
 
-  for (let i of raw.kids || []) {
-    pr.push(
-      await axios.get(`https://hacker-news.firebaseio.com/v0/item/${i}.json`).then(res => res.data)
-    );
-  }
-  const res = await Promise.all(pr);
+  const newParent = {
+    kids: raw.kids ? raw.kids : []
+  };
 
-  // Need to filter out all dead or deleted, and where there's no text/author
-  return res
-    .filter(e => (!e.dead || !e.deleted) && e.text && e.by)
-    .map(each => ({
-      id: each.id,
-      by: each.by || '',
-      type: each.type || 'comment',
-      time: each.time || '',
-      text: each.text || 'N/A',
-      kids: each.descendants > 0 ? each.kids : []
-    }));
+  return getChildren(newParent, args, context, info);
 };
