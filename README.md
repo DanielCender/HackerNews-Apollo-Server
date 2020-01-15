@@ -8,6 +8,10 @@ Clone the repo, run `yarn install` and `node index.js` to boot up the Apollo Ser
 
 Navigate to [localhost:4000](http://localhost:4000) to start running queries and inspecting the schema.
 
+### Test Queries
+
+Copy and Paste any of the queries in [this directory](tests/testing.md) to get a sense of how this API may be used.
+
 ### Structure and Thought
 
 API on GitHub: https://github.com/HackerNews/API
@@ -44,10 +48,6 @@ listTopStories {
 	url
 }
 ```
-
-### Test Queries
-
-Copy and Paste any of the queries in [this directory](tests/testing.md) to get a sense of how this API may be used.
 
 ### Apollo Graph Manager
 
