@@ -1,12 +1,23 @@
 const axios = require('axios');
 
-module.exports = async () => {
+module.exports = async (parent, args, ctx, info) => {
+  const { limit } = args;
+
   const ids = await axios
     .get('https://hacker-news.firebaseio.com/v0/topstories.json')
     .then(res => res.data);
 
   const stories = [];
-  for (let id of ids) {
+
+  let arr = [];
+  if (limit) {
+    arr = ids.slice(0, limit);
+  } else {
+    arr = ids;
+  }
+
+  for (let id of arr) {
+    // limit the return, save time
     stories.push(
       await axios
         .get(`https://hacker-news.firebaseio.com/v0/item/${id}.json`, {
@@ -23,30 +34,12 @@ module.exports = async () => {
     id: each.id,
     type: each.type || 'story',
     deleted: each.deleted || false,
-    by: each.by || '',
     time: each.time || '',
     text: each.text || 'N/A',
     dead: each.dead || false,
-    comments: [], // each.kids || [],
     url: each.url || '',
     score: each.score || 0,
-    title: each.title || ''
+    title: each.title || '',
+    by: each.by || ''
   }));
-
-  // const result = await rawMap.map(async i => {
-  //   const pr = [];
-  //   if (i.comments.length > 0) {
-  //     for (let comment of i.comments) {
-  //       pr.push(
-  //         await axios
-  //           .get(`https://hacker-news.firebaseio.com/v0/item/${comment}.json`)
-  //           .then(res => res.data)
-  //       );
-  //     }
-  //     const raw = await Promise.all(pr);
-  //     return { ...i, comments: raw };
-  //   }
-  //   return i;
-  // });
-  // return result;
 };

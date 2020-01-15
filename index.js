@@ -1,5 +1,14 @@
 const { ApolloServer, gql } = require('apollo-server');
-const { listTopStories, listDescendents } = require('./helpers/api');
+const {
+  listTopStories,
+  listDescendants,
+  getComments,
+  getUser,
+  getUserById,
+  getUserStories,
+  getUserComments,
+  getCommentParent
+} = require('./helpers/api');
 
 /**
  *	## Y Combinator Hacker News (HN) GraphQL API Mockup ##
@@ -21,6 +30,7 @@ const { listTopStories, listDescendents } = require('./helpers/api');
  * 	type Query {
  * 		listTopStories(): [Story]
  * 		listDescendants(id: ID): [Comment] # Story and Comments have desc., but all desc are Comments by nature
+ *    getUserById(id: ID!): User
  * }
  *
  * Those stories would have nested comments beneath them, which in turn may have nested descendants to one or two levels
@@ -28,8 +38,7 @@ const { listTopStories, listDescendents } = require('./helpers/api');
  *
  * 	listTopStories {
  * 		...Listable, # interface Story extends
- * 		url,
- *
+ * 		url
  * }
  *
  * 	## Apollo Graph Manager ##
@@ -45,6 +54,9 @@ const { listTopStories, listDescendents } = require('./helpers/api');
  */
 
 const typeDefs = gql`
+  """
+  The basic building blocks of HN, blog posts essentially.
+  """
   type Story implements Listable {
     id: ID!
     deleted: Boolean
@@ -54,12 +66,16 @@ const typeDefs = gql`
     # Unique
     text: String
     dead: Boolean
-    comments: [Comment]
-    url: String # comments don't have urls
+    comments: [Comment]!
+    url: String
     score: Int
     title: String
   }
 
+  """
+  The messages that sit below a Story,
+  can be nested like a directed graph through the "kids" property.
+  """
   type Comment implements Listable {
     id: ID!
     by: User
@@ -67,7 +83,11 @@ const typeDefs = gql`
     text: String
     type: String
     # Unique
-    parent: Story
+    """
+    parent field returns either Story or Comment
+    """
+    parent: Parent
+    kids: [Comment]
   }
 
   type User {
@@ -75,10 +95,13 @@ const typeDefs = gql`
     created: String
     karma: Int
     about: String
-    stories: [Story]
-    comments: [Comment]
+    stories(limit: Int): [Story]!
+    comments(limit: Int): [Comment]!
   }
 
+  """
+  Contains fields common to both Story and Comment types
+  """
   interface Listable {
     id: ID!
     by: User
@@ -87,39 +110,18 @@ const typeDefs = gql`
     text: String
   }
 
+  union Parent = Story | Comment
+
   type Query {
-    listTopStories: [Story]
-    listDescendants: [Comment]
+    listTopStories(limit: Int): [Story]!
+    listDescendants(id: ID!): [Comment]!
+    getUserById(id: ID!): User
   }
 `;
 
-const fixture = {
-  by: 'leventov',
-  descendants: 36,
-  id: 22025113,
-  kids: [
-    22025738,
-    22026162,
-    22043153,
-    22025515,
-    22025585,
-    22025699,
-    22026999,
-    22030278,
-    22028658,
-    22028909,
-    22025674
-  ],
-  score: 127,
-  time: 1578815978,
-  title: 'Climatescape.org – Mapping the global landscape of climate-saving organizations',
-  type: 'story',
-  url: 'https://climatescape.org/'
-};
-
 const resolvers = {
   Listable: {
-    __resolveType(obj, context, info) {
+    __resolveType(obj, ctx, info) {
       if (obj.type === 'story') {
         return 'Story';
       }
@@ -129,9 +131,34 @@ const resolvers = {
       return null;
     }
   },
+  Parent: {
+    __resolveType(obj, ctx, info) {
+      if (obj.type === 'story') {
+        return 'Story';
+      }
+      if (obj.type === 'comment') {
+        return 'Comment';
+      }
+      return null;
+    }
+  },
+  Comment: {
+    parent: getCommentParent,
+    kids: getComments,
+    by: getUser
+  },
+  Story: {
+    comments: getComments,
+    by: getUser
+  },
+  User: {
+    stories: getUserStories,
+    comments: getUserComments
+  },
   Query: {
     listTopStories,
-    listDescendants: id => [fixture]
+    listDescendants,
+    getUserById
   }
 };
 
@@ -139,10 +166,6 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   tracing: true
-  // engine: {
-  //   apiKey: process.env.ENGINE_API_KEY
-  //   schemaTag: 'production'
-  // }
 });
 
 server.listen().then(({ url }) => {
