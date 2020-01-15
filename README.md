@@ -1,6 +1,6 @@
-# Y Combinator Hacker News (HN) GraphQL API Mockup
+# Hacker News (HN) GraphQL Server
 
-### A test implementation of an Apollo GraphQL Server.
+### An Apollo GraphQL Server serving content from Y Combinator's infamous news source
 
 ### Getting Started
 
