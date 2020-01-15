@@ -1,0 +1,20 @@
+query {
+  listTopStories(limit: 100) {
+    id
+    text
+    title
+  }
+  # or with no limit
+  listTopStories {
+    id
+    by {
+      id
+      karma
+      stories {
+        id
+        time
+        type
+      }
+    }
+  }
+}

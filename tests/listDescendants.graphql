@@ -1,0 +1,10 @@
+query {
+  listDescendants(id: "2921983") {
+    id
+    time
+    by {
+      id
+    }
+    text
+  }
+}

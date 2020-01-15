@@ -40,6 +40,7 @@ module.exports = async (parent, args, ctx, info) => {
     url: each.url || '',
     score: each.score || 0,
     title: each.title || '',
-    by: each.by || ''
+    by: each.by || '',
+    kids: each.descendants > 0 ? each.kids : []
   }));
 };

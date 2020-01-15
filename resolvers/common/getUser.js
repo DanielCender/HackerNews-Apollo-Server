@@ -1,7 +1,6 @@
 const axios = require('axios');
 
 module.exports = async (parent, args, context, info) => {
-  console.log(parent);
   const { by } = parent;
 
   const res = await axios
