@@ -1,0 +1,43 @@
+fragment listable on Listable {
+  id
+  type
+  text
+  time
+}
+
+query {
+  getUserById(id: "i_am_not_elon") {
+    id
+    about
+    created
+    karma
+    comments(limit: 300) {
+      id
+      text
+      kids {
+        id
+      }
+      parent {
+        ...listable
+      }
+      time
+    }
+    stories(limit: 600) {
+      id
+      text
+      time
+      comments {
+        id
+        text
+        by {
+          id
+        }
+        kids {
+          id
+        }
+      }
+      title
+      url
+    }
+  }
+}
