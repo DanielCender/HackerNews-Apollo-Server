@@ -39,7 +39,7 @@ listTopStories {
 
 ### Test Queries
 
-Copy and Paste any of the queries in [this directory]('./tests/') to get a sense of how this API may be used.
+Copy and Paste any of the queries in [this directory](tests/testing.md) to get a sense of how this API may be used.
 
 ### Apollo Graph Manager
 
