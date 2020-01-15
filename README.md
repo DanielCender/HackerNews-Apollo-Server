@@ -53,6 +53,8 @@ Copy and Paste any of the queries in [this directory](tests/testing.md) to get a
 
 Useful for analytics, error reporting, and versioning: https://www.apollographql.com/docs/tutorial/production/#what-are-the-benefits-of-graph-manager
 
-To publish API to Graph Manager, first put ENGINE_API_KEY in .env file, then:
-Run: `npx apollo service:push --endpoint=http://localhost:4000`
-while this server is running (i.e. run `node index.js` in root).
+To publish API to Graph Manager, first put ENGINE_API_KEY in .env file.
+
+While the Apollo Server is running (i.e. run `node index.js` in root), run:
+
+`npx apollo service:push --endpoint=http://localhost:4000`
