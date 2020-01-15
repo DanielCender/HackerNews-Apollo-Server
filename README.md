@@ -49,8 +49,6 @@ listTopStories {
 
 Copy and Paste any of the queries in [this directory](tests/testing.md) to get a sense of how this API may be used.
 
-Start by running the
-
 ### Apollo Graph Manager
 
 Useful for analytics, error reporting, and versioning: https://www.apollographql.com/docs/tutorial/production/#what-are-the-benefits-of-graph-manager
