@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/CCG-Dev/dan-test-apollo-hosted#readme",
   "dependencies": {
-    "apollo-server": "^2.9.16",
+    "apollo-server": "^2.25.3",
     "axios": "^0.19.1",
     "graphql": "^14.5.8"
   }
